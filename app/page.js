@@ -1,101 +1,99 @@
-import Image from "next/image";
+"use client";
+import { useState } from "react";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.js
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [songs, setSongs] = useState([]);
+  const [songInput, setSongInput] = useState("");
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+  // Handle input change
+  const handleInputChange = (e) => {
+    setSongInput(e.target.value);
+  };
+
+  // Add song to the list
+  const addSong = () => {
+    if (songInput.trim()) {
+      setSongs([...songs, `/MUSIC/Library/${songInput.trim()}.m4a`]);
+      setSongInput(""); // Clear the input field
+    }
+  };
+
+  // Generate m3u8 content
+  const generateM3U8Content = () => {
+    return songs.join("\n");
+  };
+
+  // Download m3u8 file
+  const downloadFile = () => {
+    const element = document.createElement("a");
+    const file = new Blob([generateM3U8Content()], { type: "text/plain" });
+    element.href = URL.createObjectURL(file);
+    element.download = "playlist.m3u8";
+    document.body.appendChild(element); // Required for this to work in FireFox
+    element.click();
+  };
+
+  // Handle drag and drop of m3u8 file
+  const handleFileDrop = (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file && file.name.endsWith(".m3u8")) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const text = event.target.result;
+        const fileSongs = text.split("\n").filter((line) => line.trim() !== "");
+        setSongs(fileSongs);
+      };
+      reader.readAsText(file);
+    } else {
+      alert("Please drop a valid .m3u8 file");
+    }
+  };
+
+  // Prevent default behavior for drag over
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  return (
+    <div style={{ padding: "20px" }}>
+      <h1>M3U8 Playlist Generator</h1>
+
+      {/* Input form for adding song */}
+      <div>
+        <input
+          type="text"
+          value={songInput}
+          onChange={handleInputChange}
+          placeholder="Enter song name (without extension)"
+        />
+        <button onClick={addSong}>Add Song</button>
+      </div>
+
+      {/* Drag and Drop Area */}
+      <div
+        style={{
+          margin: "20px 0",
+          padding: "20px",
+          border: "2px dashed #cccccc",
+          textAlign: "center",
+        }}
+        onDrop={handleFileDrop}
+        onDragOver={handleDragOver}
+      >
+        Drag and drop an .m3u8 file here to load songs
+      </div>
+
+      {/* Display the playlist */}
+      <h2>Playlist</h2>
+      <ul>
+        {songs.map((song, index) => (
+          <li key={index}>{song}</li>
+        ))}
+      </ul>
+
+      {/* Button to download m3u8 */}
+      <button onClick={downloadFile}>Download M3U8</button>
     </div>
   );
 }
