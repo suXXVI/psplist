@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import HowToUse from "./howTo/HowToUse";
 
 export default function Home() {
   const [songs, setSongs] = useState([]);
@@ -64,7 +63,10 @@ export default function Home() {
   return (
     <div className="flex justify-center flex-col items-center">
       <h1 className="mb-3 text-3xl font-bold mt-6">PSPlaylist Creator</h1>
-      <button className="mb-10 underline" onClick={() => route.push("/howTo")}>
+      <button
+        className="mb-10 underline text-sky-400"
+        onClick={() => route.push("/howTo")}
+      >
         How to use
       </button>
 
@@ -83,6 +85,8 @@ export default function Home() {
         >
           <option>.mp3</option>
           <option>.m4a</option>
+          <option>.wav</option>
+          <option>.wma</option>
         </select>
         <button
           className="py-2 px-4 bg-sky-400 text-white font bold rounded-md active:bg-sky-700 disabled:bg-gray-600 disabled:text-gray-500"
@@ -99,7 +103,7 @@ export default function Home() {
         onDrop={handleFileDrop}
         onDragOver={handleDragOver}
       >
-        Drag and drop an .m3u8 file here to update existing playlist
+        Drag and drop an .m3u8 file here to update an existing playlist
       </div>
 
       {/* Display the playlist */}
