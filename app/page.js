@@ -1,9 +1,14 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import HowToUse from "./howTo/HowToUse";
 
 export default function Home() {
   const [songs, setSongs] = useState([]);
   const [songInput, setSongInput] = useState("");
+  const [extension, setExtension] = useState(".mp3");
+
+  const route = useRouter();
 
   // Handle input change
   const handleInputChange = (e) => {
@@ -13,7 +18,7 @@ export default function Home() {
   // Add song to the list
   const addSong = () => {
     if (songInput.trim()) {
-      setSongs([...songs, `/MUSIC/Library/${songInput.trim()}.m4a`]);
+      setSongs([...songs, `/MUSIC/Library/${songInput.trim()}${extension}`]);
       setSongInput(""); // Clear the input field
     }
   };
@@ -31,6 +36,7 @@ export default function Home() {
     element.download = "playlist.m3u8";
     document.body.appendChild(element); // Required for this to work in FireFox
     element.click();
+    setSongs([]);
   };
 
   // Handle drag and drop of m3u8 file
@@ -56,44 +62,67 @@ export default function Home() {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>M3U8 Playlist Generator</h1>
+    <div className="flex justify-center flex-col items-center">
+      <h1 className="mb-3 text-3xl font-bold mt-6">PSPlaylist Creator</h1>
+      <button className="mb-10 underline" onClick={() => route.push("/howTo")}>
+        How to use
+      </button>
 
       {/* Input form for adding song */}
-      <div>
+      <div className="flex flex-row gap-3">
         <input
           type="text"
           value={songInput}
           onChange={handleInputChange}
           placeholder="Enter song name (without extension)"
+          className="w-96 py-2 px-4 rounded-md text-gray-900"
         />
-        <button onClick={addSong}>Add Song</button>
+        <select
+          className="text-gray-900 px-2"
+          onChange={(e) => setExtension(e.target.value)}
+        >
+          <option>.mp3</option>
+          <option>.m4a</option>
+        </select>
+        <button
+          className="py-2 px-4 bg-sky-400 text-white font bold rounded-md active:bg-sky-700 disabled:bg-gray-600 disabled:text-gray-500"
+          onClick={addSong}
+          disabled={!songInput}
+        >
+          Add Song
+        </button>
       </div>
 
       {/* Drag and Drop Area */}
       <div
-        style={{
-          margin: "20px 0",
-          padding: "20px",
-          border: "2px dashed #cccccc",
-          textAlign: "center",
-        }}
+        className="mt-12 p-10 border-2 border-dashed text-center mb-12"
         onDrop={handleFileDrop}
         onDragOver={handleDragOver}
       >
-        Drag and drop an .m3u8 file here to load songs
+        Drag and drop an .m3u8 file here to update existing playlist
       </div>
 
       {/* Display the playlist */}
-      <h2>Playlist</h2>
-      <ul>
-        {songs.map((song, index) => (
-          <li key={index}>{song}</li>
-        ))}
-      </ul>
-
+      {songs.length >= 1 && (
+        <div className="border-2 border-white py-5 px-2 w-1/2 mb-12">
+          <h2 className="text-center font-bold text-2xl border-b mb-2 pb-2">
+            Playlist
+          </h2>
+          <ul className="flex flex-start flex-col">
+            {songs.map((song, index) => (
+              <li key={index}>{song}</li>
+            ))}
+          </ul>
+        </div>
+      )}
       {/* Button to download m3u8 */}
-      <button onClick={downloadFile}>Download M3U8</button>
+      <button
+        className="py-2 px-4 bg-sky-400 text-white font bold rounded-md active:bg-sky-700 disabled:bg-gray-600 disabled:text-gray-500"
+        onClick={downloadFile}
+        disabled={songs.length < 1}
+      >
+        Download .m3u8
+      </button>
     </div>
   );
 }
