@@ -62,7 +62,21 @@ export default function Home() {
 
   return (
     <div className="flex justify-center flex-col items-center">
-      <h1 className="mb-3 text-3xl font-bold mt-6">PSPlaylist Creator</h1>
+      <h1 className="mb-3 text-3xl font-bold mt-6">PSPlaylist</h1>
+      <p className="text-xs mb-5">
+        A playlist generator for the PlayStation Portable
+        <span>created by</span>
+        <span>
+          <a
+            className="text-sky-600"
+            href="https://github.com/suXXVI"
+            target="_blank"
+          >
+            @suXXVI
+          </a>
+        </span>
+        <span> on github</span>
+      </p>
       <button
         className="mb-10 underline text-sky-400"
         onClick={() => route.push("/howTo")}
