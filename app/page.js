@@ -78,7 +78,7 @@ export default function Home() {
         <span> on github</span>
       </p>
       <button
-        className="mb-10 underline text-sky-400"
+        className="mb-10 underline text-sky-600"
         onClick={() => route.push("/howTo")}
       >
         How to use
