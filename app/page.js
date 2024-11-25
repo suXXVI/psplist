@@ -65,7 +65,7 @@ export default function Home() {
       <h1 className="mb-3 text-3xl font-bold mt-6">PSPlaylist</h1>
       <p className="text-xs mb-5">
         A playlist generator for the PlayStation Portable
-        <span>created by </span>
+        <span> created by </span>
         <span>
           <a
             className="text-sky-600"
