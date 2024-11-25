@@ -6,15 +6,8 @@ export default function Home() {
   const [songs, setSongs] = useState([]);
   const [songInput, setSongInput] = useState("");
   const [extension, setExtension] = useState(".mp3");
-  const [userCount, setUserCount] = useState(0);
 
   const route = useRouter();
-
-  useEffect(() => {
-    const numberOfUsers = Math.floor(Math.random() * 20) + 5;
-
-    setUserCount(numberOfUsers);
-  }, []);
 
   // Handle input change
   const handleInputChange = (e) => {
@@ -148,12 +141,6 @@ export default function Home() {
       >
         Download .m3u8
       </button>
-
-      {/* number of current users */}
-      {/* <div className="absolute bottom-4 flex flex-row gap-2">
-        <p>Online users:</p>
-        <p className="text-sky-600">{userCount}</p>
-      </div> */}
     </div>
   );
 }
