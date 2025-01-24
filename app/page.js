@@ -1,13 +1,11 @@
 "use client";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
+import Link from "next/link";
 
 export default function Home() {
   const [songs, setSongs] = useState([]);
   const [songInput, setSongInput] = useState("");
   const [extension, setExtension] = useState(".mp3");
-
-  const route = useRouter();
 
   // Handle input change
   const handleInputChange = (e) => {
@@ -77,12 +75,9 @@ export default function Home() {
         </span>
         <span> on github</span>
       </p>
-      <button
-        className="mb-10 underline text-sky-600"
-        onClick={() => route.push("/howTo")}
-      >
+      <Link className="mb-10 underline text-sky-600" href="/howTo">
         How to use
-      </button>
+      </Link>
 
       {/* Input form for adding song */}
       <div className="flex flex-row gap-3">
